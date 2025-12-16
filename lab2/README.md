@@ -1,48 +1,52 @@
-# lab2
+# Лабораторна робота №2: Взаємодія компонентів та роутинг у Vue.js
 
-This template should help get you started developing with Vue 3 in Vite.
+## Опис
+Створення міні-адмін панелі з використанням Vue 3 (Composition API) та Vue Router. Реалізовано механізми авторизації, захисту маршрутів, lazy-loading та різні способи взаємодії між компонентами.
 
-## Recommended IDE Setup
+## Запуск проекту
 
-[VS Code](https://code.visualstudio.com/) + [Vue (Official)](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+1. Встановлення залежностей:
+   ```bash
+   npm install
 
-## Recommended Browser Setup
+   ---
+2. Запуск локального сервера:
+   ```bash
+   npm run dev
+   
+   ---
 
-- Chromium-based browsers (Chrome, Edge, Brave, etc.):
-  - [Vue.js devtools](https://chromewebstore.google.com/detail/vuejs-devtools/nhdogjmejiglipccpnnnanhbledajbpd) 
-  - [Turn on Custom Object Formatter in Chrome DevTools](http://bit.ly/object-formatters)
-- Firefox:
-  - [Vue.js devtools](https://addons.mozilla.org/en-US/firefox/addon/vue-js-devtools/)
-  - [Turn on Custom Object Formatter in Firefox DevTools](https://fxdx.dev/firefox-devtools-custom-object-formatters/)
+## Скріншоти
 
-## Type Support for `.vue` Imports in TS
+1. Сторінка авторизації (Login) ![login.png](screenshots/login.png)
+2. Сторінка реєстрації з валідацією ![register.png](screenshots/register.png)
+3. Адмін-панель (Dashboard) ![dashboard.png](screenshots/dashboard.png)
+4. Звіти (Scoped Slots) ![reports.png](screenshots/reports.png)
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
+## Технічні деталі (Реалізація вимог)
 
-## Customize configuration
+1. Компоненти та v-model
+BaseInput.vue: Реалізовано кастомний інпут з використанням макросу defineModel (Vue 3.4+) для двостороннього зв'язування даних. Це дозволяє використовувати v-model у батьківських компонентах без зайвого коду.
 
-See [Vite Configuration Reference](https://vite.dev/config/).
 
-## Project Setup
+2. Слоти (Slots)
 
-```sh
-npm install
-```
+* Default Slot: Використано в AuthLayout.vue для обгортання контенту форм входу та реєстрації.
+* Named Slot: Використано в AdminLayout.vue (слот sidebar) для можливості кастомізації меню навігації.
+* Scoped Slot: Реалізовано в ReportsView.vue (слот #row="{ item }"). Це дозволяє батьківському компоненту отримувати дані про рядок таблиці та самостійно вирішувати, як їх стилізувати (наприклад, колір статусу).
 
-### Compile and Hot-Reload for Development
+3. Provide / Inject
 
-```sh
-npm run dev
-```
+* Provide: У AdminLayout.vue передається реактивний об'єкт userData (імітація даних авторизованого користувача).
+* Inject: У DashboardView.vue ці дані приймаються через inject для відображення ролі користувача, оминаючи передачу через props.
 
-### Type-Check, Compile and Minify for Production
+4. KeepAlive
 
-```sh
-npm run build
-```
+* Використано на сторінці Dashboard для кешування вкладок.
+* Компонент DashboardOverview загорнуто в <KeepAlive>, що дозволяє зберігати введені дані в інпутах при перемиканні між вкладками (Overview/Activity).
 
-### Lint with [ESLint](https://eslint.org/)
+5. Vue Router
 
-```sh
-npm run lint
-```
+* Lazy Loading: Маршрути адмін-панелі (/admin/...) завантажуються ліниво (import(...)) для оптимізації.
+* Navigation Guards: Реалізовано глобальний guard beforeEach, який перевіряє мета-поле requiresAuth та наявність "токена" в localStorage. Неавторизованих користувачів перенаправляє на логін.
+* Scroll Behavior: Налаштовано скидання скролу вгору (top: 0) при переході на нову сторінку.

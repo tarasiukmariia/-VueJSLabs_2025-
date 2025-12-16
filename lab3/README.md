@@ -1,48 +1,55 @@
-# lab3
+# Лабораторна робота №3: Стилізація компонентів у Vue.js
 
-This template should help get you started developing with Vue 3 in Vite.
+## Опис проекту
 
-## Recommended IDE Setup
+Розробка міні-сайту новин із використанням розширених можливостей Vue 3. У проекті реалізовано перемикання тем (світла/темна), анімації переходів між сторінками, модальні вікна через Teleport та різні підходи до стилізації (Scoped styles, CSS Modules, v-bind).
 
-[VS Code](https://code.visualstudio.com/) + [Vue (Official)](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+## Інструкція із запуску
 
-## Recommended Browser Setup
+1. **Встановлення залежностей:**
+   ```bash
+   npm install
+   ```
 
-- Chromium-based browsers (Chrome, Edge, Brave, etc.):
-  - [Vue.js devtools](https://chromewebstore.google.com/detail/vuejs-devtools/nhdogjmejiglipccpnnnanhbledajbpd) 
-  - [Turn on Custom Object Formatter in Chrome DevTools](http://bit.ly/object-formatters)
-- Firefox:
-  - [Vue.js devtools](https://addons.mozilla.org/en-US/firefox/addon/vue-js-devtools/)
-  - [Turn on Custom Object Formatter in Firefox DevTools](https://fxdx.dev/firefox-devtools-custom-object-formatters/)
+---
 
-## Type Support for `.vue` Imports in TS
+2. **Запуск локального сервера:**
+   ```bash
+   npm run dev
+   ```
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
+---
 
-## Customize configuration
+## Скріншоти
 
-See [Vite Configuration Reference](https://vite.dev/config/).
+1. Головна сторінка (Світла тема) ![mainLight.png](screenshots/mainLight.png)
+2. Темна тема ![mainDark.png](screenshots/mainDark.png)
+3. Сторінка новини з динамічним стилем (v-bind) ![NewsView.png](screenshots/NewsView.png)
+4. Модальне вікно (Teleport + Transition) ![ModalView.png](screenshots/ModalView.png)
 
-## Project Setup
+## Технічні деталі
 
-```sh
-npm install
-```
+1. **Стилізація та CSS**
 
-### Compile and Hot-Reload for Development
+- Scoped Styles: Використано в більшості компонентів (TheHeader, HomeView) для ізоляції стилів.
+- CSS Modules: Реалізовано в компоненті NewsCard.vue (файл NewsCard.module.css). Це забезпечує повну ізоляцію класів і дозволяє звертатися до них як до об'єкта $style або імпортованого об'єкта.
+- v-bind() у CSS: Використано на сторінці ArticleView.vue. Колір рекламного банера динамічно змінюється через змінну JavaScript (const bannerColor), яка прив'язана до CSS властивості background-color.
+  Теми (Dark/Light): Реалізовано через CSS Variables (:root vs .dark-theme) у файлі main.css. Стан теми зберігається в localStorage.
 
-```sh
-npm run dev
-```
+2. **Анімації та UX**
 
-### Type-Check, Compile and Minify for Production
+- Page Transitions: Компонент <RouterView> обгорнуто в <Transition name="fade">. Використано режим mode="out-in" для плавного переходу між маршрутами.
+- Modal Animation: Модальне вікно має анімацію появи (opacity), реалізовану через класи .modal-enter-active та .modal-leave-active.
 
-```sh
-npm run build
-```
+3. **Teleport**
 
-### Lint with [ESLint](https://eslint.org/)
+- Компонент AdModal.vue використовує <Teleport to="body">. Це дозволяє рендерити модальне вікно за межами ієрархії компонентів (безпосередньо в <body>), що спрощує позиціонування (position: fixed) та перекриття контенту.
 
-```sh
-npm run lint
-```
+## Висновок: Особливості стилізації у Vue.js
+
+Під час виконання роботи було досліджено різні підходи до стилізації у Vue 3:
+
+1. Scoped Styles (<style scoped>) є найзручнішим варіантом для більшості випадків, оскільки Vue автоматично додає унікальні атрибути data-v-\*, запобігаючи конфліктам стилів.
+2. CSS Modules надають ще суворішу ізоляцію та дозволяють уникнути конфліктів імен класів навіть без спеціальних атрибутів, що корисно для бібліотек компонентів, але вимагає синтаксису classes.className.
+3. v-bind() у CSS — це потужний інструмент, який стирає межу між логікою (JS) та представленням (CSS), дозволяючи реактивно змінювати значення властивостей без маніпуляцій з inline-стилями.
+4. Глобальні стилі необхідні для налаштування базових параметрів (шрифти, скидання відступів) та реалізації тем через CSS змінні, оскільки Scoped стилі не проникають у дочірні компоненти або html/body напряму.

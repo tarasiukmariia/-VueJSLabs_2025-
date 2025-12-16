@@ -8,7 +8,11 @@ import TheFooter from './components/TheFooter.vue'
   <div class="app-layout">
     <TheHeader />
     <main>
-      <RouterView />
+      <router-view v-slot="{ Component }">
+        <Transition name="fade" mode="out-in">
+          <component :is="Component" />
+        </Transition>
+      </router-view>
     </main>
     <TheFooter />
   </div>
@@ -22,5 +26,16 @@ import TheFooter from './components/TheFooter.vue'
 }
 main {
   flex: 1;
+  position: relative;
+}
+
+:global(.fade-enter-active),
+:global(.fade-leave-active) {
+  transition: opacity 0.3s ease;
+}
+
+:global(.fade-enter-from),
+:global(.fade-leave-to) {
+  opacity: 0;
 }
 </style>

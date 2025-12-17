@@ -1,48 +1,64 @@
-# lab4
+# Лабораторна робота №4: Управління станом (Pinia), локалізація (i18n) та валідація (VeeValidate)
 
-This template should help get you started developing with Vue 3 in Vite.
+## Опис
 
-## Recommended IDE Setup
+У цій роботі розроблено SPA-застосунок "Profile & Cart". Реалізовано централізоване сховище даних через **Pinia**, мультимовність інтерфейсу через **vue-i18n** та складну форму профілю з динамічними полями та валідацією через **VeeValidate** + **Yup**.
 
-[VS Code](https://code.visualstudio.com/) + [Vue (Official)](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+## Інструкція із запуску
 
-## Recommended Browser Setup
+1. **Встановлення залежностей:**
+   ```bash
+   npm install
+   ```
 
-- Chromium-based browsers (Chrome, Edge, Brave, etc.):
-  - [Vue.js devtools](https://chromewebstore.google.com/detail/vuejs-devtools/nhdogjmejiglipccpnnnanhbledajbpd) 
-  - [Turn on Custom Object Formatter in Chrome DevTools](http://bit.ly/object-formatters)
-- Firefox:
-  - [Vue.js devtools](https://addons.mozilla.org/en-US/firefox/addon/vue-js-devtools/)
-  - [Turn on Custom Object Formatter in Firefox DevTools](https://fxdx.dev/firefox-devtools-custom-object-formatters/)
+---
 
-## Type Support for `.vue` Imports in TS
+2. **Запуск локального сервера:**
+   ```bash
+   npm run dev
+   ```
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
+---
 
-## Customize configuration
+## Скріншоти
 
-See [Vite Configuration Reference](https://vite.dev/config/).
+1. **Профіль (Українська локалізація + Валідація)**
 
-## Project Setup
+   ![vitelatest.png](screenshots/profileUA.png)
 
-```sh
-npm install
-```
+2. **Профіль (Англійська локалізація)**
 
-### Compile and Hot-Reload for Development
+   ![vitelatest.png](screenshots/profileEN.png)
 
-```sh
-npm run dev
-```
+3. **Кошик товарів**
 
-### Type-Check, Compile and Minify for Production
+   ![vitelatest.png](screenshots/cart.png)
 
-```sh
-npm run build
-```
+## Технічні деталі
 
-### Lint with [ESLint](https://eslint.org/)
+1. **Pinia**
+   Використано для глобального керування станом застосунку.
 
-```sh
-npm run lint
-```
+- Ініціалізація: createPinia() підключено в main.ts.
+- Стори (src/stores/):
+  - products: Містить список доступних товарів (mock data).
+  - cart: Реалізує логіку додавання/видалення товарів та обчислення суми (totalPrice, totalCount) через геттери.
+  - settings: Відповідає за налаштування мови.
+- Персистентність:
+  - Використано плагін pinia-plugin-persistedstate.
+  - У сторі settings налаштовано збереження тільки поля locale (pick: ['locale']) із власним ключем key: 'lab4-settings-store'. Це дозволяє зберігати обрану мову після перезавантаження сторінки.
+
+2. **Vue-i18n**
+
+- Конфігурація: Файл src/i18n.ts ініціалізує createI18n.
+- Переклади: JSON-файли в src/locales/ (en, ua).
+- Синхронізація: У сторі settings при виклику setLocale змінюється як стан Pinia, так і i18n.global.locale.value.
+- Кастомний модифікатор: Реалізовано модифікатор snake, який перетворює текст у верхній регістр із підкресленнями (приклад використання на сторінці Products: nav.products.snake).
+
+3. **VeeValidate + Yup**
+   Реалізовано на сторінці ProfileView.vue.
+
+- Схема валідації: Використано бібліотеку Yup. Схема створена через computed, щоб повідомлення помилок реактивно змінювались при перемиканні мови.
+- useForm / useField: Використано для керування станом форми та окремих полів (ім'я, email, дата, адреса).
+- useFieldArray: Реалізовано для динамічного списку телефонів (можливість додавати/видаляти номери).
+- setFieldError: Емуляція помилки серверу. Якщо ввести email error@test.com, система встановить ручну помилку для поля email.
